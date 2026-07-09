@@ -1,4 +1,4 @@
-name: Docker Build & Trivy Scan
+name: Docker Build For SAF
 
 on:
   push:
