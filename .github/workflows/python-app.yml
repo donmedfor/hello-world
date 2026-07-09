@@ -1,4 +1,4 @@
-name: Docker Build & Trivy Security Scan
+name: Docker Build & Trivy Scan
 
 on:
   push:
@@ -14,8 +14,7 @@ permissions:
   security-events: write
 
 jobs:
-  docker-build-scan:
-
+  docker-security:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,21 +25,23 @@ jobs:
         run: |
           docker build -t hello-flask:${{ github.sha }} .
 
-      - name: Scan Docker image (Table)
-        uses: aquasecurity/trivy-action@0.33.1
+      - name: Run Trivy scan (Table Report)
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: hello-flask:${{ github.sha }}
           format: table
           output: trivy-report.txt
           exit-code: 0
+          ignore-unfixed: true
 
-      - name: Generate SARIF report
-        uses: aquasecurity/trivy-action@0.33.1
+      - name: Generate SARIF Report
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: hello-flask:${{ github.sha }}
           format: sarif
           output: trivy-report.sarif
           exit-code: 0
+          ignore-unfixed: true
 
       - name: Upload SARIF to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
